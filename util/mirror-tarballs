@@ -575,7 +575,40 @@ if [ "$answer" = "Y" ]; then
         echo "$info_txt applying the patch for nginx security advisory (CVE-2026-27654)"
         patch -p1 < $root/patches/nginx/$main_ver/nginx-$main_ver-CVE-2026-27654.patch || exit 1
     fi
+
+    answer=`$root/util/ver-ge "$main_ver" 1.31.0`
+    if [ "$answer" = "N" ]; then
+        answer=`$root/util/ver-ge "$main_ver" 1.27.1`
+        if [ "$answer" = "Y" ]; then
+            # HTTP/3 address spoofing
+            echo "$info_txt applying the patch for nginx security advisory (CVE-2026-40460)"
+            patch -p1 < $root/patches/nginx/$main_ver/nginx-$main_ver-CVE-2026-40460.patch || exit 1
+        fi
+
+        # resolver use-after-free in OCSP
+        echo "$info_txt applying the patch for nginx security advisory (CVE-2026-40701)"
+        patch -p1 < $root/patches/nginx/$main_ver/nginx-$main_ver-CVE-2026-40701.patch || exit 1
+
+        answer=`$root/util/ver-ge "$main_ver" 1.29.4`
+        if [ "$answer" = "Y" ]; then
+            # HTTP/2 request injection in the ngx_http_proxy_module
+            echo "$info_txt applying the patch for nginx security advisory (CVE-2026-42926)"
+            patch -p1 < $root/patches/nginx/$main_ver/nginx-$main_ver-CVE-2026-42926.patch || exit 1
+        fi
+
+        # Buffer overread in the ngx_http_charset_module
+        echo "$info_txt applying the patch for nginx security advisory (CVE-2026-42934)"
+        patch -p1 < $root/patches/nginx/$main_ver/nginx-$main_ver-CVE-2026-42934.patch || exit 1
+
+        # Buffer overflow in the ngx_http_rewrite_module
+        echo "$info_txt applying the patch for nginx security advisory (CVE-2026-42945)"
+        patch -p1 < $root/patches/nginx/$main_ver/nginx-$main_ver-CVE-2026-42945.patch || exit 1
+
+        echo "$info_txt applying the patch for nginx security advisory (CVE-2026-42946)"
+        patch -p1 < $root/patches/nginx/$main_ver/nginx-$main_ver-CVE-2026-42946.patch || exit 1
+    fi
 fi
+
 
 echo "$info_txt applying the upstream_timeout_fields patch for nginx"
 patch -p1 < $root/patches/nginx/$main_ver/nginx-$main_ver-upstream_timeout_fields.patch || exit 1
